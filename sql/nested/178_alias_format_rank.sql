@@ -19,3 +19,6 @@ select p.* from (Select
 s.score,
 (select count(distinct score) from Scores where Score >= s.Score)  as 'rank'
 from Scores s) p order by p.rank
+
+#窗口函数 https://www.zhihu.com/tardis/zm/art/92654574?source_id=1005
+select score, dense_rank() over(order by score desc) as 'rank' from Scores
