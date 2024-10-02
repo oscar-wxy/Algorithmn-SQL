@@ -24,8 +24,11 @@ for cluster_id in $clusters; do
       '.[] | select(.Key == $key and (.Value | contains($substring)))' > /dev/null; then
         echo "Cluster ID: $cluster_id has tag with $TAG_KEY containing substring '$TAG_SUBSTRING'"
         
-        # List files in the S3 location for this cluster
-        s3_path="$S3_PREFIX/$cluster_id/"
+        # Get the Master Node EC2 instance ID
+        master_node_ec2_instance_id=$(aws emr describe-cluster --cluster-id $cluster_id --query 'Cluster.MasterPublicDnsName' --output text | cut -d. -f1)
+
+        # Update the S3 path to include the EC2 instance ID
+        s3_path="$S3_PREFIX/$cluster_id/$master_node_ec2_instance_id/"
         echo "Listing files in $s3_path"
         
         # Get the latest updated file
